@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
 import { fetchMovieById } from "../api/movieApi";
-import { addFavorite } from "../features/favorites/favoritesSlice";
 
 const Wrapper = styled.div`
   max-width: 1100px;
@@ -53,23 +51,10 @@ const Plot = styled.p`
   line-height: 1.6;
 `;
 
-const FavButton = styled.button`
-  margin-top: 18px;
-  padding: 10px 16px;
-  background: #ffcc00;
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: filter 0.15s;
-  &:hover {
-    filter: brightness(0.95);
-  }
-`;
+
 
 export default function Detail() {
   const { id } = useParams();
-  const dispatch = useDispatch();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -84,17 +69,7 @@ export default function Detail() {
     loadMovie();
   }, [id]);
 
-  const handleAddFavorite = () => {
-    if (!movie) return;
-    dispatch(
-      addFavorite({
-        imdbID: movie.imdbID,
-        Title: movie.Title,
-        Year: movie.Year,
-        Poster: movie.Poster,
-      })
-    );
-  };
+
 
   if (loading) {
     return (
@@ -142,9 +117,6 @@ export default function Detail() {
           <Plot>
             <strong>Plot:</strong> {movie.Plot || "No plot"}
           </Plot>
-          <FavButton onClick={handleAddFavorite}>
-            + Add to favorites
-          </FavButton>
         </Info>
       </DetailBox>
     </Wrapper>

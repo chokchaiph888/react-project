@@ -1,8 +1,9 @@
-// src/components/MovieCard.js
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"; 
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite } from "../features/favorites/favoritesSlice";
 
 const Card = styled.div`
   border-radius: 10px;
@@ -21,7 +22,30 @@ const Poster = styled.img`
   border-radius: 8px;
 `;
 
+const Button = styled.button`
+  margin-top: 8px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  background: ${(props) => (props.added ? "#aaa" : "#ff4d6d")};
+  color: white;
+  transition: background 0.2s;
+  &:hover {
+    background: ${(props) => (props.added ? "#999" : "#e63946")};
+  }
+`;
+
 export default function MovieCard({ movie }) {
+  const dispatch = useDispatch();
+  const favorites = useSelector((state) => state.favorites);
+  const isAdded = favorites.some((m) => m.imdbID === movie.imdbID);
+
+  const handleAddFavorite = () => {
+    if (!isAdded) dispatch(addFavorite(movie));
+  };
+
   return (
     <Card>
       <Link to={`/movie/${movie.imdbID}`} style={{ textDecoration: "none", color: "black" }}>
@@ -29,6 +53,10 @@ export default function MovieCard({ movie }) {
         <h4>{movie.Title}</h4>
         <p>{movie.Year}</p>
       </Link>
+
+      <Button added={isAdded} onClick={handleAddFavorite} disabled={isAdded}>
+        {isAdded ? "✅ Added to Favorites" : "Add to Favorites"}
+      </Button>
     </Card>
   );
 }

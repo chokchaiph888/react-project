@@ -35,6 +35,7 @@ const Title = styled.h2`
 export default function Detail() {
   const { id } = useParams(); // อ่าน id จาก URL เช่น tt0468569
   const [movie, setMovie] = useState(null);
+  
 
   useEffect(() => {
     const loadMovie = async () => {
