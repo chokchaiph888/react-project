@@ -14,7 +14,7 @@ function App() {
         <Route path="/" element={<Home />} />
 
         {/* หน้ารายละเอียดหนัง */}
-        <Route path="/detail/:id" element={<Detail />} />
+        <Route path="/movie/:id" element={<Detail />} />
 
         {/* หน้าFav */}
         <Route path="/favorites" element={<Favorites />} />

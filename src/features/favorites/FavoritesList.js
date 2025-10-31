@@ -13,15 +13,16 @@ function FavoritesList() {
   if (!favorites || favorites.length === 0) {
     return (
       <div style={{ textAlign: 'center', marginTop: '60px' }}>
-        <h2>No Favorite Movies Yet </h2>
+        <h2>No Favorite Movies Yet</h2>
         <p>Add some movies to your favorites list!</p>
       </div>
     );
   }
+
   return (
     <div style={{ padding: '20px' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>
-        My Favorite Movies 
+        My Favorite Movies
       </h2>
       <div
         style={{
@@ -52,6 +53,7 @@ function FavoritesList() {
                   height: '300px',
                   objectFit: 'cover',
                   borderRadius: '8px',
+                  
                 }}
               />
             ) : (
