@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { fetchMovieById } from "../api/movieApi";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../features/favorites/favoritesSlice";
 
 const Wrapper = styled.div`
   max-width: 1100px;
@@ -51,14 +53,28 @@ const Plot = styled.p`
   line-height: 1.6;
 `;
 
+const FavButton = styled.button`
+  background-color: ${(props) => (props.remove ? "#999" : "#ff3366")};
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  margin-top: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 
+  &:hover {
+    background-color: ${(props) => (props.remove ? "#777" : "#ff0044")};
+  }
+`;
 
 export default function Detail() {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const favorites = useSelector((state) => state.favorites);
 
-  // ดึงข้อมูลหนังจาก imdbID
   useEffect(() => {
     const loadMovie = async () => {
       setLoading(true);
@@ -68,8 +84,6 @@ export default function Detail() {
     };
     loadMovie();
   }, [id]);
-
-
 
   if (loading) {
     return (
@@ -86,6 +100,16 @@ export default function Detail() {
       </Wrapper>
     );
   }
+
+  const isFavorite = favorites.some((fav) => fav.imdbID === movie.imdbID);
+
+  const toggleFavorite = () => {
+    if (isFavorite) {
+      dispatch(removeFavorite(movie.imdbID));
+    } else {
+      dispatch(addFavorite(movie));
+    }
+  };
 
   return (
     <Wrapper>
@@ -117,6 +141,11 @@ export default function Detail() {
           <Plot>
             <strong>Plot:</strong> {movie.Plot || "No plot"}
           </Plot>
+
+          {/* ปุ่ม Favorites */}
+          <FavButton onClick={toggleFavorite} remove={isFavorite}>
+            {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+          </FavButton>
         </Info>
       </DetailBox>
     </Wrapper>
