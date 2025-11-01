@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { useDispatch } from "react-redux";
 import { fetchMovieById } from "../api/movieApi";
-import { addFavorite } from "../features/favorites/favoritesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../features/favorites/favoritesSlice";
 
 const Wrapper = styled.div`
   max-width: 1100px;
@@ -54,26 +54,27 @@ const Plot = styled.p`
 `;
 
 const FavButton = styled.button`
-  margin-top: 18px;
-  padding: 10px 16px;
-  background: #ffcc00;
+  background-color: ${(props) => (props.remove ? "#999" : "#ff3366")};
+  color: white;
   border: none;
-  border-radius: 10px;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 18px;
+  margin-top: 16px;
   cursor: pointer;
-  transition: filter 0.15s;
+  transition: background-color 0.2s;
+
   &:hover {
-    filter: brightness(0.95);
+    background-color: ${(props) => (props.remove ? "#777" : "#ff0044")};
   }
 `;
 
 export default function Detail() {
   const { id } = useParams();
-  const dispatch = useDispatch();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const favorites = useSelector((state) => state.favorites);
 
-  // ดึงข้อมูลหนังจาก imdbID
   useEffect(() => {
     const loadMovie = async () => {
       setLoading(true);
@@ -83,18 +84,6 @@ export default function Detail() {
     };
     loadMovie();
   }, [id]);
-
-  const handleAddFavorite = () => {
-    if (!movie) return;
-    dispatch(
-      addFavorite({
-        imdbID: movie.imdbID,
-        Title: movie.Title,
-        Year: movie.Year,
-        Poster: movie.Poster,
-      })
-    );
-  };
 
   if (loading) {
     return (
@@ -111,6 +100,16 @@ export default function Detail() {
       </Wrapper>
     );
   }
+
+  const isFavorite = favorites.some((fav) => fav.imdbID === movie.imdbID);
+
+  const toggleFavorite = () => {
+    if (isFavorite) {
+      dispatch(removeFavorite(movie.imdbID));
+    } else {
+      dispatch(addFavorite(movie));
+    }
+  };
 
   return (
     <Wrapper>
@@ -142,8 +141,10 @@ export default function Detail() {
           <Plot>
             <strong>Plot:</strong> {movie.Plot || "No plot"}
           </Plot>
-          <FavButton onClick={handleAddFavorite}>
-            + Add to favorites
+
+          {/* ปุ่ม Favorites */}
+          <FavButton onClick={toggleFavorite} remove={isFavorite}>
+            {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
           </FavButton>
         </Info>
       </DetailBox>
