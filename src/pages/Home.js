@@ -35,7 +35,7 @@ export default function Home() {
 
   return (
     <div>
-      <h1 style={{ textAlign: "center" }}>🎬 Movie Explorer</h1>
+      <h1 style={{ textAlign: "center" }}>Movie Explorer</h1>
       <SearchBox
         type="text"
         placeholder="Search movie..."
